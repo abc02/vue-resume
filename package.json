@@ -1,0 +1,20 @@
+{
+  "name": "vue-resume",
+  "version": "1.0.0",
+  "description": "an  vue online resume editing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abc02/vue-resume.git"
+  },
+  "keywords": [],
+  "author": "me <abcgg02@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abc02/vue-resume/issues"
+  },
+  "homepage": "https://github.com/abc02/vue-resume#readme"
+}
