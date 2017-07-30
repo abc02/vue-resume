@@ -1,6 +1,7 @@
 <template>  
     <div id="topbar">
-        I am Topbar 
+        <h2>Resume</h2>
+        <el-button type="primary">预览</el-button>
     </div>
 </template>
 
