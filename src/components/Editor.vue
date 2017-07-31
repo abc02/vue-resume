@@ -2,29 +2,9 @@
     <div id="editor">
         <nav>
             <ol>
-                <li v-bind:class="{active:currentTab===0}" v-on:click="currentTab = 0">
+                <li v-for="i in tabsArr" v-bind:class="{active:currentTab === i}" v-on:click="currentTab = i">
                     <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-card"></use>
-                    </svg>
-                </li>
-                <li v-bind:class="{active:currentTab===1}" v-on:click="currentTab = 1">
-                    <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-works"></use>
-                    </svg>
-                </li>
-                <li v-bind:class="{active:currentTab===2}" v-on:click="currentTab = 2">
-                    <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-skill"></use>
-                    </svg>
-                </li>
-                <li v-bind:class="{active:currentTab===3}" v-on:click="currentTab = 3">
-                    <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-school"></use>
-                    </svg>
-                </li>
-                <li v-bind:class="{active:currentTab===4}" v-on:click="currentTab = 4">
-                    <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-phone"></use>
+                        <use v-bind:xlink:href="`#icon-${icons[i]}`"></use>
                     </svg>
                 </li>
             </ol>
@@ -42,6 +22,8 @@
 export default {
     data() {
         return {
+            tabsArr: [0, 1, 2, 3, 4],
+            icons: ['card', 'works', 'skill', 'school', 'phone'],
             currentTab: 0
         }
     }
