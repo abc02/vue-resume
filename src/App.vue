@@ -2,8 +2,8 @@
   <div id="app">
     <Topbar class="topbar" />
     <main>
-      <Editor class="editor" />
-      <Preview class="preview" />
+      <Editor class="editor" v-bind:resume="resume" />
+      <Preview class="preview" v-bind:resume="resume" />
     </main>
   </div>
 </template>
@@ -16,7 +16,33 @@ import Preview from './components/Preview'
 export default {
   components: {
     Topbar, Editor, Preview
+  },
+  data() {
+    return {
+      resume: {
+        profile: {
+          name: '',
+          citry: '',
+          birth: ''
+        },
+        workHistory: [
+          { company: '', content: '' },
+        ],
+        projects: [
+          { name: '', content: '' },
+        ],
+        school: [
+          { name: '', major: '' }
+        ],
+        contact: {
+          phone: '',
+          wechat: '',
+          email: ''
+        }
+      }
+    }
   }
+
 }
 </script>
 

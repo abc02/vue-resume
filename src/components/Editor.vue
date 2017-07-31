@@ -11,19 +11,19 @@
     </nav>
     <ol class="panes">
       <li v-bind:class="{acitve: currentTab ===0}">
-        <ProfileEditor v-bind:profile="profile"></ProfileEditor>
+        <ProfileEditor v-bind:profile="resume.profile"></ProfileEditor>
       </li>
       <li v-bind:class="{acitve: currentTab ===1}">
-        <WorkHistoryEditor v-bind:workHistory="workHistory"></WorkHistoryEditor>
+        <WorkHistoryEditor v-bind:workHistory="resume.workHistory"></WorkHistoryEditor>
       </li>
       <li v-bind:class="{acitve: currentTab ===2}">
-        <ProjectEditor v-bind:projects="projects"></ProjectEditor>
+        <ProjectEditor v-bind:projects="resume.projects"></ProjectEditor>
       </li>
       <li v-bind:class="{acitve: currentTab ===3}">
-        <SchoolEditor v-bind:school="school"></SchoolEditor>
+        <SchoolEditor v-bind:school="resume.school"></SchoolEditor>
       </li>
       <li v-bind:class="{acitve: currentTab ===4}">
-        <ContactEditor v-bind:contact="contact"></ContactEditor>
+        <ContactEditor v-bind:contact="resume.contact"></ContactEditor>
       </li>
     </ol>
   </div>
@@ -38,30 +38,12 @@ export default {
   components: {
     ProfileEditor, WorkHistoryEditor, ProjectEditor, SchoolEditor, ContactEditor
   },
+  props: ['resume'],
   data() {
     return {
       tabsArr: [0, 1, 2, 3, 4],
       icons: ['card', 'works', 'skill', 'school', 'phone'],
       currentTab: 0,
-      profile: {
-        name: '',
-        citry: '',
-        birth: ''
-      },
-      workHistory: [
-        { company: '', content: '' },
-      ],
-      projects: [
-        { name: '', content: '' },
-      ],
-      school: [
-        { name: '', major: '' }
-      ],
-      contact: {
-        phone: '',
-        email: ''
-      }
-
     }
   }
 

@@ -6,6 +6,9 @@
                 <el-form-item label="手机">
                     <el-input v-model="contact.phone"></el-input>
                 </el-form-item>
+                <el-form-item label="微信">
+                    <el-input v-model="contact.wechat"></el-input>
+                </el-form-item>
                 <el-form-item label="邮箱">
                     <el-input v-model="contact.email"></el-input>
                 </el-form-item>
