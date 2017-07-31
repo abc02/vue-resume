@@ -2,7 +2,7 @@
   <div id="editor">
     <nav>
       <ol>
-        <li v-for="i in tabsArr" v-bind:class="{active:currentTab === i}" v-on:click="currentTab = i" v-bind:title="firstCapital[i]">
+        <li v-for="i in tabsArr" v-bind:class="{active:currentTab === i}" v-on:click="currentTab = i">
           <svg class="icon" aria-hidden="true">
             <use v-bind:xlink:href="`#icon-${icons[i]}`"></use>
           </svg>
@@ -11,84 +11,33 @@
     </nav>
     <ol class="panes">
       <li v-bind:class="{acitve: currentTab ===0}">
-        <h2>个人信息</h2>
-        <el-form>
-          <div class="container">
-            <el-form-item label="姓名">
-              <el-input v-model="profile.name"></el-input>
-            </el-form-item>
-            <el-form-item label="城市">
-              <el-input v-model="profile.citry"></el-input>
-            </el-form-item>
-            <el-form-item label="出生年月">
-              <el-input v-model="profile.birth"></el-input>
-            </el-form-item>
-          </div>
-        </el-form>
+        <ProfileEditor v-bind:profile="profile"></ProfileEditor>
       </li>
       <li v-bind:class="{acitve: currentTab ===1}">
-        <h2>工作经历</h2>
-        <el-form>
-          <div class="container" v-for="(work,index) in workHistory">
-            <el-form-item label="公司">
-              <el-input v-model="work.company"></el-input>
-            </el-form-item>
-            <el-form-item label="工作内容">
-              <el-input v-model="work.content"></el-input>
-            </el-form-item>
-            <i class="el-icon-circle-cross" v-on:click="removeWorkHistory(index)"></i>
-          </div>
-        </el-form>
-        <el-button v-on:click="addWorkHistory">新增</el-button>
+        <WorkHistoryEditor v-bind:workHistory="workHistory"></WorkHistoryEditor>
       </li>
       <li v-bind:class="{acitve: currentTab ===2}">
-        <h2>前端项目</h2>
-        <el-form>
-          <div class="container" v-for="(item,index) in projects">
-            <el-form-item label="项目名称">
-              <el-input v-model="item.name"></el-input>
-            </el-form-item>
-            <el-form-item label="项目内容">
-              <el-input v-model="item.content"></el-input>
-            </el-form-item>
-            <i class="el-icon-circle-cross" v-on:click="removeProject(index)"></i>
-          </div>
-        </el-form>
-        <el-button v-on:click="addProject">新增</el-button>
+        <ProjectEditor v-bind:projects="projects"></ProjectEditor>
       </li>
       <li v-bind:class="{acitve: currentTab ===3}">
-        <h2>学习经历</h2>
-        <el-form>
-          <div class="container" v-for="(item,index) in school">
-            <el-form-item label="学校">
-              <el-input v-model="item.name"></el-input>
-            </el-form-item>
-            <el-form-item label="专业">
-              <el-input v-model="item.major"></el-input>
-            </el-form-item>
-            <i class="el-icon-circle-cross" v-on:click="removeSchool(index)"></i>
-          </div>
-        </el-form>
-        <el-button v-on:click="addSchool">新增</el-button>
+        <SchoolEditor v-bind:school="school"></SchoolEditor>
       </li>
       <li v-bind:class="{acitve: currentTab ===4}">
-        <h2>联系方式</h2>
-        <el-form>
-          <div class="container">
-            <el-form-item label="手机">
-              <el-input></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱">
-              <el-input></el-input>
-            </el-form-item>
-          </div>
-        </el-form>
+        <ContactEditor v-bind:contact="contact"></ContactEditor>
       </li>
     </ol>
   </div>
 </template>
 <script>
+import ProfileEditor from './ProfileEditor'
+import WorkHistoryEditor from './WorkHistoryEditor'
+import ProjectEditor from './ProjectEditor'
+import SchoolEditor from './SchoolEditor'
+import ContactEditor from './ContactEditor'
 export default {
+  components: {
+    ProfileEditor, WorkHistoryEditor, ProjectEditor, SchoolEditor, ContactEditor
+  },
   data() {
     return {
       tabsArr: [0, 1, 2, 3, 4],
@@ -107,41 +56,12 @@ export default {
       ],
       school: [
         { name: '', major: '' }
-      ]
+      ],
+      contact: {
+        phone: '',
+        email: ''
+      }
 
-    }
-  },
-  computed: {
-    firstCapital() {
-      return this.icons.map((e) => {
-        return e.slice(0, 1).toUpperCase() + e.slice(1)
-      })
-    }
-  },
-  methods: {
-    addWorkHistory() {
-      this.workHistory.push({
-        company: '', content: ''
-      })
-    },
-    removeWorkHistory(index) {
-      this.workHistory.splice(index, 1)
-    },
-    addProject() {
-      this.projects.push({
-        name: '', content: ''
-      })
-    },
-    removeProject(index) {
-      this.projects.splice(index, 1)
-    },
-    addSchool() {
-      this.school.push({
-        name: '', major: ''
-      })
-    },
-    removeSchool(index) {
-      this.school.splice(index, 1)
     }
   }
 
