@@ -1,10 +1,11 @@
 <template>
-  <div id="app">
-    <Topbar class="topbar" />
+  <div id="app" v-bind:class="{previewNode:previewNode}">
+    <Topbar id="topbar" class="topbar" v-on:preview="preview" />
     <main>
-      <Editor class="editor" v-bind:resume="resume" />
-      <Preview class="preview" v-bind:resume="resume" />
+      <Editor id="editor" class="editor" v-bind:resume="resume" />
+      <Preview id="preview" class="preview" v-bind:resume="resume" />
     </main>
+    <el-button id="exitPreview" v-on:click="exitPreview">退出预览</el-button>
   </div>
 </template>
 
@@ -19,6 +20,7 @@ export default {
   },
   data() {
     return {
+      previewNode: false,
       resume: {
         profile: {
           name: '',
@@ -40,6 +42,14 @@ export default {
           email: ''
         }
       }
+    }
+  },
+  methods: {
+    exitPreview() {
+      this.previewNode = false
+    },
+    preview() {
+      this.previewNode = true
     }
   }
 
@@ -90,5 +100,32 @@ export default {
       overflow: hidden;
     }
   }
+}
+
+.previewNode {
+  #topbar {
+    display: none;
+  }
+  main {
+    #editor {
+      display: none;
+    }
+    #preview {
+      max-width: 800px;
+      margin: 32px auto;
+    }
+  }
+}
+
+
+#exitPreview {
+  display: none;
+}
+
+.previewNode #exitPreview {
+  display: inline-block;
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
 }
 </style>
