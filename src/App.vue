@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-bind:class="{previewNode:previewNode}">
-    <Topbar id="topbar" class="topbar" v-on:preview="preview" />
+    <Topbar id="topbar" class="topbar" v-on:preview="preview" v-on:saveData="saveData" />
     <main>
       <Editor id="editor" class="editor" v-bind:resume="resume" />
       <Preview id="preview" class="preview" v-bind:resume="resume" />
@@ -14,6 +14,28 @@ import Topbar from './components/Topbar'
 import Editor from './components/Editor'
 import Preview from './components/Preview'
 
+
+let defaultResume = {
+  profile: {
+    name: '',
+    citry: '',
+    birth: ''
+  },
+  workHistory: [
+    { company: '', content: '' },
+  ],
+  projects: [
+    { name: '', content: '' },
+  ],
+  school: [
+    { name: '', major: '' }
+  ],
+  contact: {
+    phone: '',
+    wechat: '',
+    email: ''
+  }
+}
 export default {
   components: {
     Topbar, Editor, Preview
@@ -21,27 +43,7 @@ export default {
   data() {
     return {
       previewNode: false,
-      resume: {
-        profile: {
-          name: '',
-          citry: '',
-          birth: ''
-        },
-        workHistory: [
-          { company: '', content: '' },
-        ],
-        projects: [
-          { name: '', content: '' },
-        ],
-        school: [
-          { name: '', major: '' }
-        ],
-        contact: {
-          phone: '',
-          wechat: '',
-          email: ''
-        }
-      }
+      resume: defaultResume
     }
   },
   methods: {
@@ -50,9 +52,25 @@ export default {
     },
     preview() {
       this.previewNode = true
+    },
+    saveData() {
+      let resumetring = JSON.stringify(this.resume)
+      window.localStorage.setItem('myresume', resumetring)
+    },
+    readOldData() {
+      console.log('readOldData')
+      let oldResumetring = window.localStorage.getItem('myresume')
+      let oldResume = JSON.parse(oldResumetring)
+      this.resume = oldResume || defaultResume
     }
-  }
 
+  },
+  created() {
+    // 浏览器卸载时，存储数据到localStorage
+    window.onbeforeunload = () => this.saveData()
+
+    this.readOldData()
+  }
 }
 </script>
 

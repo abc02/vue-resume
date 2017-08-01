@@ -61,6 +61,9 @@ export default {
     }
 }
 </script>
-<style>
-#preview {}
+<style lang="scss">
+#preview {
+    padding: 32px;
+    h1 {}
+}
 </style>
