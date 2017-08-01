@@ -1,4 +1,6 @@
 <template>
+  <!--newresume 分支重构界面  -->
+  
   <div id="app" v-bind:class="{previewNode:previewNode}">
     <Topbar id="topbar" class="topbar" v-on:preview="preview" v-on:saveData="saveData" />
     <main>
@@ -143,7 +145,7 @@ export default {
 .previewNode #exitPreview {
   display: inline-block;
   position: fixed;
-  right: 16px;
+  left: 16px;
   bottom: 16px;
 }
 </style>
