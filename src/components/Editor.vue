@@ -1,28 +1,20 @@
 <template>
   <div id="editor">
-    <nav>
-      <ol>
-        <li v-for="i in tabsArr" v-bind:class="{active:currentTab === i}" v-on:click="currentTab = i">
-          <svg class="icon" aria-hidden="true">
-            <use v-bind:xlink:href="`#icon-${icons[i]}`"></use>
-          </svg>
-        </li>
-      </ol>
-    </nav>
+  
     <ol class="panes">
-      <li v-bind:class="{acitve: currentTab ===0}">
+      <li v-bind:class="{acitve: resume.currentTab ===0}">
         <ProfileEditor v-bind:profile="resume.profile"></ProfileEditor>
       </li>
-      <li v-bind:class="{acitve: currentTab ===1}">
+      <li v-bind:class="{acitve: resume.currentTab ===1}">
         <WorkHistoryEditor v-bind:workHistory="resume.workHistory"></WorkHistoryEditor>
       </li>
-      <li v-bind:class="{acitve: currentTab ===2}">
+      <li v-bind:class="{acitve: resume.currentTab ===2}">
         <ProjectEditor v-bind:projects="resume.projects"></ProjectEditor>
       </li>
-      <li v-bind:class="{acitve: currentTab ===3}">
+      <li v-bind:class="{acitve: resume.currentTab ===3}">
         <SchoolEditor v-bind:school="resume.school"></SchoolEditor>
       </li>
-      <li v-bind:class="{acitve: currentTab ===4}">
+      <li v-bind:class="{acitve: resume.currentTab ===4}">
         <ContactEditor v-bind:contact="resume.contact"></ContactEditor>
       </li>
     </ol>
@@ -35,17 +27,10 @@ import ProjectEditor from './ProjectEditor'
 import SchoolEditor from './SchoolEditor'
 import ContactEditor from './ContactEditor'
 export default {
+  props: ['resume'],
   components: {
     ProfileEditor, WorkHistoryEditor, ProjectEditor, SchoolEditor, ContactEditor
   },
-  props: ['resume'],
-  data() {
-    return {
-      tabsArr: [0, 1, 2, 3, 4],
-      icons: ['card', 'works', 'skill', 'school', 'phone'],
-      currentTab: 0,
-    }
-  }
 
 }
 </script>

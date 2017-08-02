@@ -4,6 +4,7 @@
   <div id="app" v-bind:class="{previewNode:previewNode}">
     <Topbar id="topbar" class="topbar" v-on:preview="preview" v-on:saveData="saveData" />
     <main>
+      <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume"></NavEditor>
       <Editor id="editor" class="editor" v-bind:resume="resume" />
       <Preview id="preview" class="preview" v-bind:resume="resume" />
     </main>
@@ -13,11 +14,13 @@
 
 <script>
 import Topbar from './components/Topbar'
+import NavEditor from './components/NavEditor'
 import Editor from './components/Editor'
 import Preview from './components/Preview'
 
 
 let defaultResume = {
+  currentTab: 0,
   profile: {
     name: '',
     citry: '',
@@ -40,7 +43,7 @@ let defaultResume = {
 }
 export default {
   components: {
-    Topbar, Editor, Preview
+    Topbar, NavEditor, Editor, Preview
   },
   data() {
     return {
