@@ -35,34 +35,17 @@ export default {
 }
 </script>
 <style lang="scss">
+@import '../assets/color.scss';
 #editor {
   min-height: 100px;
   display: flex;
-  >nav {
-    background-color: #000;
-    width: 80px;
-    >ol>li {
-      padding: 16px 0;
-      text-align: center;
-      >.icon {
-        fill: white;
-        width: 24px;
-        height: 24px;
-      }
-      &.active {
-        background: white;
-        >.icon {
-          fill: black;
-        }
-      }
-    }
-  }
   >.panes {
     display: flex;
     flex: 1;
     >li {
       display: none;
       padding: 32px;
+      padding-top: 0px;
       height: 100%;
       width: 100%;
       overflow: auto;
@@ -72,11 +55,20 @@ export default {
       }
       h2 {
         text-align: left;
+        background-color: $White;
+        padding: 16px;
+        box-shadow: 0 3px 5px hsla(0, 0, 0, .2);
+        border-radius: 2px;
+        overflow: hidden;
       }
       .container {
         border-top: 1px solid #ddd;
         margin-top: 16px;
         position: relative;
+        >.el-form-item {
+          background-color: $White;
+          padding: 8px;
+        }
         .el-icon-circle-cross {
           position: absolute;
           right: 0;

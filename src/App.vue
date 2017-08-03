@@ -2,13 +2,19 @@
   <!--newresume 分支重构界面  -->
   
   <div id="app" v-bind:class="{previewNode:previewNode}">
-    <Topbar id="topbar" class="topbar" v-on:preview="preview" v-on:saveData="saveData" />
-    <main>
-      <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume"></NavEditor>
-      <Editor id="editor" class="editor" v-bind:resume="resume" />
-      <Preview id="preview" class="preview" v-bind:resume="resume" />
-    </main>
-    <el-button id="exitPreview" v-on:click="exitPreview">退出预览</el-button>
+    <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume" v-on:preview="preview" v-on:saveData="saveData"></NavEditor>
+    <div class="container">
+      <Topbar id="topbar" class="topbar" />
+      <main>
+        <Editor id="editor" class="editor" v-bind:resume="resume" />
+        <Preview id="preview" class="preview" v-bind:resume="resume" />
+      </main>
+      <div id="exitPreview" v-on:click="exitPreview">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-exit"></use>
+        </svg>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -63,6 +69,7 @@ export default {
       window.localStorage.setItem('myresume', resumetring)
     },
     readOldData() {
+      ``
       console.log('readOldData')
       let oldResumetring = window.localStorage.getItem('myresume')
       let oldResume = JSON.parse(oldResumetring)
@@ -80,13 +87,13 @@ export default {
 </script>
 
 <style lang="scss">
+@import './assets/color.scss';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
   display: flex;
-  flex-direction: column;
   .icon {
     width: 1em;
     height: 1em;
@@ -94,48 +101,52 @@ export default {
     fill: currentColor;
     overflow: hidden;
   }
-
-  >.topbar {
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 0 3px hsla(0, 0, 0, .5);
-  }
-  >main {
-    background-color: #ddd;
+  >.container {
+    background-color: $DarkWhite;
+    width: 100vw;
     display: flex;
-    flex: 1;
-    >.editor {
-      width: 40em;
-      background-color: white;
-      box-shadow: 0 0 3px hsla(0, 0, 0, .5);
-      margin: 16px;
-      margin-right: 8px;
-      border-radius: 4px;
-      overflow: hidden;
+    flex-direction: column;
+    >.topbar {
+      background-color: $White;
+      color: $Black;
     }
-    >.preview {
+    >main {
+      display: flex;
       flex: 1;
-      background-color: white;
-      box-shadow: 0 0 3px hsla(0, 0, 0, .5);
-      margin: 16px;
-      margin-left: 8px;
-      border-radius: 4px;
-      overflow: hidden;
+      >.editor {
+        width: 40em;
+        margin: 16px;
+        margin-right: 8px; // background-color: $White;
+        overflow: hidden;
+      }
+      >.preview {
+        flex: 1;
+        background-color: $White;
+        margin: 16px;
+        margin-left: 8px;
+        border-radius: 4px;
+      }
     }
   }
 }
 
 .previewNode {
-  #topbar {
+  >#naveditor {
     display: none;
   }
-  main {
-    #editor {
+
+  >.container {
+    #topbar {
       display: none;
     }
-    #preview {
-      max-width: 800px;
-      margin: 32px auto;
+    >main {
+      #editor {
+        display: none;
+      }
+      #preview {
+        max-width: 800px;
+        margin: 32px auto;
+      }
     }
   }
 }
@@ -146,9 +157,13 @@ export default {
 }
 
 .previewNode #exitPreview {
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
+  color: $Black;
   display: inline-block;
   position: fixed;
-  left: 16px;
+  left: 24px;
   bottom: 16px;
 }
 </style>
