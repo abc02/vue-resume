@@ -7,13 +7,19 @@ $Silver:#8492A6;
 $LightSilver:#99A9BF;
 $ExtraLightSilver:#C0CCDA;
 $Gray:#D3DCE6;
-$LightGray:E5E9F2;
+$LightGray:#E5E9F2;
 $ExtraLightGray:#EFF2F7;
 //---分割线
 $White:#fbfcfc;
+$LightWhite: #DEE6E6;
 $DarkWhite:#dbdbd5;
 $Yellow:#d59822;
 $LightYellow:#e6a422;
 $DarkYellow:#a98758;
 $Black:#373434;
-$LightGreen:#6dc8ad
+$Green: #B7E4D6;
+$LightGreen:#6dc8ad;
+//---阴影
+$Shadow:hsla(0, 0, 0, .3);
+$LightShadow:hsla(0, 0, 0, .1);
+$DarkShadow:hsal(0, 0, 0, .5);

@@ -35,3 +35,10 @@ h5,
 h6 {
     font-weight: normal;
 }
+
+button {
+    border-width: 0;
+    &:active {
+        border-width: 0;
+    }
+}

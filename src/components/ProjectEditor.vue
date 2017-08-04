@@ -12,7 +12,15 @@
                 <i class="el-icon-circle-cross" v-on:click="removeProject(index)"></i>
             </div>
         </el-form>
-        <el-button v-on:click="addProject">新增</el-button>
+        <div class="button-container">
+            <button class="empty" v-on:click="emptyProject">清空</button>
+            <button class="added" v-on:click="addProject">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-save"></use>
+                </svg>
+                <span>新增</span>
+            </button>
+        </div>
     </div>
 </template>
 
@@ -28,6 +36,13 @@ export default {
         },
         removeProject(index) {
             this.projects.splice(index, 1)
+        },
+        emptyProject() {
+            this.projects.map((obj) => {
+                for (let key in obj) {
+                    obj[key] = ''
+                }
+            })
         }
     }
 }

@@ -6,7 +6,7 @@
     <div class="container">
       <Topbar id="topbar" class="topbar" />
       <main>
-        <Editor id="editor" class="editor" v-bind:resume="resume" />
+        <Editor id="editor" class="editor" v-bind:resume="resume" v-on:saveData="saveData" />
         <Preview id="preview" class="preview" v-bind:resume="resume" />
       </main>
       <div id="exitPreview" v-on:click="exitPreview">
@@ -69,7 +69,6 @@ export default {
       window.localStorage.setItem('myresume', resumetring)
     },
     readOldData() {
-      ``
       console.log('readOldData')
       let oldResumetring = window.localStorage.getItem('myresume')
       let oldResume = JSON.parse(oldResumetring)
@@ -156,14 +155,31 @@ export default {
   display: none;
 }
 
-.previewNode #exitPreview {
-  width: 32px;
-  height: 32px;
-  font-size: 32px;
-  color: $Black;
-  display: inline-block;
-  position: fixed;
-  left: 24px;
-  bottom: 16px;
+.previewNode {
+  #exitPreview {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    color: $Black;
+    display: inline-block;
+    position: fixed;
+    left: 24px;
+    bottom: 16px;
+    >.icon {
+      fill: $Black;
+      width: 32px;
+      height: 32px;
+    }
+    &.active {
+      >.icon {
+        fill: $LightYellow;
+      }
+    }
+    &:hover {
+      >.icon {
+        fill: $DarkYellow;
+      }
+    }
+  }
 }
 </style>

@@ -69,11 +69,6 @@ export default {
                 fill: $DarkYellow;
             }
         }
-        &:active {
-            >.icon {
-                fill: $LightYellow;
-            }
-        }
     }
 }
 </style>

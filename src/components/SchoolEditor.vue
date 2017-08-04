@@ -12,7 +12,15 @@
                 <i class="el-icon-circle-cross" v-on:click="removeSchool(index)"></i>
             </div>
         </el-form>
-        <el-button v-on:click="addSchool">新增</el-button>
+        <div class="button-container">
+            <button class="empty" v-on:click="emptySchool">清空</button>
+            <button class="added" v-on:click="addSchool">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-save"></use>
+                </svg>
+                <span>新增</span>
+            </button>
+        </div>
     </div>
 </template>
 
@@ -28,6 +36,13 @@ export default {
         },
         removeSchool(index) {
             this.school.splice(index, 1)
+        },
+        emptySchool() {
+            this.school.map((obj) => {
+                for (let key in obj) {
+                    obj[key] = ''
+                }
+            })
         }
     }
 }
