@@ -14,9 +14,9 @@
                 </el-form-item>
             </div>
         </el-form>
-        <div class="button-container">
-            <button class="empty" v-on:click="emptyProfile">清空</button>
-        </div>
+        <!-- <div class="button-container">
+                <button class="empty" v-on:click="emptyProfile">清空</button>
+            </div> -->
     </div>
 </template>
 

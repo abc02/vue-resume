@@ -108,6 +108,7 @@ export default {
     >.topbar {
       background-color: $White;
       color: $Black;
+      box-shadow: 0 6px 6px $LightShadow;
     }
     >main {
       display: flex;
