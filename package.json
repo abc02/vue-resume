@@ -12,6 +12,7 @@
   "dependencies": {
     "animate.css": "^3.5.2",
     "element-ui": "^1.4.1",
+    "leancloud-realtime": "^3.5.5",
     "leancloud-storage": "^3.0.4",
     "normalize.css": "^7.0.0",
     "vue": "^2.3.3"
