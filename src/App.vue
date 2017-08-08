@@ -7,7 +7,7 @@
     </transition>
     <div class="container">
       <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
-        <Topbar id="topbar" class="topbar" v-show="!isPreviewNode" />
+        <Topbar id="topbar" class="topbar" v-show="!isPreviewNode" v-on:logined="readLeancloud" />
       </transition>
       <main>
         <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
@@ -29,9 +29,11 @@ import Topbar from './components/Topbar'
 import NavEditor from './components/NavEditor'
 import Editor from './components/Editor'
 import Preview from './components/Preview'
-
+import AV from 'leancloud-storage'
 
 let defaultResume = {
+  currentUser: null,
+  objectId: null,
   currentTab: 0,
   profile: {
     name: '',
@@ -68,23 +70,76 @@ export default {
       this.isPreviewNode = !this.isPreviewNode
     },
     saveData() {
+      console.log('data', this.resume.id)
+      if (this.resume.id) {
+        this.updataLeancloud()
+      } else {
+        this.saveInitData()
+      }
+    },
+    saveInitData() {
+
+      // window.localStorage.setItem('myresume', resumetring)`
       console.log('saveData')
-      let resumetring = JSON.stringify(this.resume)
-      window.localStorage.setItem('myresume', resumetring)
+      var resumetring = JSON.stringify(this.resume)
+      var Resumefile = AV.Object.extend('resumefile')
+      var resumefile = new Resumefile()
+      var acl = new AV.ACL()
+      acl.setReadAccess(AV.User.current(), true) // 只有这个 user 能读
+      acl.setWriteAccess(AV.User.current(), true) // 只有这个 user 能写
+      resumefile.set('resumefile', resumetring);
+      resumefile.setACL(acl) // 设置访问控制
+
+      // 设置优先级
+      resumefile.save().then((resumefile) => {
+        this.resume.id = resumefile.id
+        console.log('objectId is ' + resumefile.id);
+      }, function (error) {
+        console.error(error);
+      });
     },
     readOldData() {
       console.log('readOldData')
       let oldResumetring = window.localStorage.getItem('myresume')
       let oldResume = JSON.parse(oldResumetring)
       this.resume = oldResume || defaultResume
+    },
+    readLeancloud(currentUser) {
+      this.resume.currentUser = currentUser
+      if (!currentUser) {
+        this.resume = defaultResume
+      }
+      console.log(currentUser)
+      if (currentUser) {
+        var query = new AV.Query('resumefile');
+        query.find()
+          .then((resumefile) => {
+            let resume = resumefile[0]
+            let id = resume.id
+            console.log(resume, id)
+            this.resume = JSON.parse(resume.attributes.resumefile)
+            this.resume.id = id
+          }, function (error) {
+            console.error(error)
+          })
+      }
+    },
+    updataLeancloud() {
+      // console.log(this.resumefile.id)
+      var newresumefile = AV.Object.createWithoutData('resumefile', this.resume.id);
+      // 修改属性
+      var resumetring = JSON.stringify(this.resume)
+      newresumefile.set('resumefile', resumetring);
+      // 保存到云端
+      newresumefile.save();
     }
 
   },
   created() {
     // 浏览器卸载时，存储数据到localStorage
-    window.onbeforeunload = () => this.saveData()
+    // window.onbeforeunload = () => this.saveData()
 
-    this.readOldData()
+    // this.readOldData()
   }
 }
 </script>

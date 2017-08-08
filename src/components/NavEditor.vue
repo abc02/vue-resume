@@ -8,7 +8,7 @@
             </li>
         </ol>
         <ol>
-            <li id="save" class="save" v-on:click="saveData">
+            <li id="save" class="save" v-on:click="saveData" v-show="resume.currentUser">
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-save"></use>
                 </svg>
