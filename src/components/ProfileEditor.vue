@@ -14,25 +14,13 @@
                 </el-form-item>
             </div>
         </el-form>
-        <!-- <div class="button-container">
-                <button class="empty" v-on:click="emptyProfile">清空</button>
-            </div> -->
     </div>
 </template>
 
 
 <script>
 export default {
-    props: ['profile'],
-    methods: {
-        emptyProfile() {
-            for (let key in this.profile) {
-                this.profile[key] = ''
-            }
-            this.$emit('saveData')
-        }
-
-    }
+    props: ['profile']
 }
 </script>
 

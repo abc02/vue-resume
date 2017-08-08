@@ -59,7 +59,7 @@ export default {
             width: 32px;
             height: 32px;
         }
-        &.active {
+        &:active {
             >.icon {
                 fill: $LightYellow;
             }

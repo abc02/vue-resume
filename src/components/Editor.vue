@@ -2,25 +2,36 @@
   <div id="editor">
   
     <ol class="panes">
-      <li v-bind:class="{acitve: resume.currentTab ===0}">
-        <ProfileEditor v-bind:profile="resume.profile" v-on:saveData="saveData"> </ProfileEditor>
-        <ButtonGroup v-bind:buttonType="porfileButton"></ButtonGroup>
-      </li>
-      <li v-bind:class="{acitve: resume.currentTab ===1}">
-        <WorkHistoryEditor v-bind:workHistory="resume.workHistory"></WorkHistoryEditor>
-        <ButtonGroup v-bind:buttonType="workHistoryButton"></ButtonGroup>
-      </li>
-      <li v-bind:class="{acitve: resume.currentTab ===2}">
-        <ProjectEditor v-bind:projects="resume.projects"></ProjectEditor>
-        <ButtonGroup v-bind:buttonType="projectsButton"></ButtonGroup>
-      </li>
-      <li v-bind:class="{acitve: resume.currentTab ===3}">
-        <SchoolEditor v-bind:school="resume.school"></SchoolEditor>
-        <ButtonGroup v-bind:buttonType="schoolButton"></ButtonGroup>
-      </li>
-      <li v-bind:class="{acitve: resume.currentTab ===4}">
-        <ContactEditor v-bind:contact="resume.contact"></ContactEditor>
-      </li>
+      <transition enter-active-class="animated bounceInLeft" v-on:transitionend="test">
+        <li v-bind:class="{acitve: resume.currentTab ===0}" v-show="resume.currentTab === 0">
+          <ProfileEditor v-bind:profile="resume.profile" />
+          <ButtonGroup v-bind:buttonType="porfileButton" />
+        </li>
+      </transition>
+      <transition enter-active-class="animated bounceInLeft">
+        <li v-bind:class="{acitve: resume.currentTab ===1}" v-show="resume.currentTab ===1">
+          <WorkHistoryEditor v-bind:workHistory="resume.workHistory" />
+          <ButtonGroup v-bind:buttonType="workHistoryButton" />
+        </li>
+      </transition>
+      <transition enter-active-class="animated bounceInLeft">
+        <li v-bind:class="{acitve: resume.currentTab ===2}" v-show="resume.currentTab === 2">
+          <ProjectEditor v-bind:projects="resume.projects" />
+          <ButtonGroup v-bind:buttonType="projectsButton" />
+        </li>
+      </transition>
+      <transition enter-active-class="animated bounceInLeft">
+        <li v-bind:class="{acitve: resume.currentTab ===3}" v-show="resume.currentTab ===3">
+          <SchoolEditor v-bind:school="resume.school" />
+          <ButtonGroup v-bind:buttonType="schoolButton" />
+        </li>
+      </transition>
+      <transition enter-active-class="animated bounceInLeft">
+        <li v-bind:class="{acitve: resume.currentTab ===4}" v-show="resume.currentTab ===4">
+          <ContactEditor v-bind:contact="resume.contact" />
+          <ButtonGroup v-bind:buttonType="contactButton" />
+        </li>
+      </transition>
     </ol>
   </div>
 </template>
@@ -35,6 +46,7 @@ export default {
   props: ['resume'],
   data() {
     return {
+      show: true,
       porfileButton: {
         type: 'profile',
         msg: ['清空'],
@@ -54,7 +66,12 @@ export default {
         type: 'school',
         msg: ['清空', '新增'],
         callBlacks: [this.emptyData, this.addData]
-      }
+      },
+      contactButton: {
+        type: 'contact',
+        msg: ['清空'],
+        callBlacks: [this.emptyData]
+      },
 
     }
   },
@@ -62,9 +79,6 @@ export default {
     ProfileEditor, WorkHistoryEditor, ProjectEditor, SchoolEditor, ContactEditor, ButtonGroup
   },
   methods: {
-    saveData() {
-      this.$emit('saveData')
-    },
     addData(type) {
       let tmp = this.resume[type]
       if (!Array.isArray(tmp)) return
@@ -97,6 +111,9 @@ export default {
         })
       }
     },
+    test() {
+      console.log('transitionend ')
+    }
 
   }
 
@@ -159,8 +176,8 @@ export default {
         }
         .el-icon-circle-cross {
           position: absolute;
-          right: 0;
-          top: 8px;
+          right: 16px;
+          top: 24px;
           cursor: pointer;
           font-size: 16px;
         }

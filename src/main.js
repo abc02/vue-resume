@@ -6,6 +6,7 @@ import App from './App'
 // css 统一性、重置
 import 'normalize.css'
 import './assets/reset.scss'
+import 'animate.css'
 
 // ele-UI
 import ElementUI from 'element-ui'

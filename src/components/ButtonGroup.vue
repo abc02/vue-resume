@@ -10,7 +10,7 @@
             <span>{{buttonType.msg[1]}}</span>
         </button>
     </div>
-</template>
+</template>``
 
 
 <script>

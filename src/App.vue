@@ -1,16 +1,22 @@
 <template>
   <!--newresume 分支重构界面  -->
   
-  <div id="app" v-bind:class="{previewNode:previewNode}">
-    <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume" v-on:preview="preview" v-on:saveData="saveData"></NavEditor>
+  <div id="app" v-bind:class="{previewNode:isPreviewNode}">
+    <transition tag="div" enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft" appear>
+      <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume" v-on:preview="isPreview" v-on:saveData="saveData" v-show="!isPreviewNode" />
+    </transition>
     <div class="container">
-      <Topbar id="topbar" class="topbar" />
+      <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
+        <Topbar id="topbar" class="topbar" v-show="!isPreviewNode" />
+      </transition>
       <main>
-        <Editor id="editor" class="editor" v-bind:resume="resume" v-on:saveData="saveData" />
+        <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
+          <Editor id="editor" class="editor" v-bind:resume="resume" v-on:saveData="saveData" v-show="!isPreviewNode" />
+        </transition>
         <Preview id="preview" class="preview" v-bind:resume="resume" />
       </main>
-      <div id="exitPreview" v-on:click="exitPreview">
-        <svg class="icon" aria-hidden="true">
+      <div id="exitPreview" v-on:click="isPreview">
+        <svg class="icon" aria-hidden="true ">
           <use xlink:href="#icon-exit"></use>
         </svg>
       </div>
@@ -53,18 +59,16 @@ export default {
   },
   data() {
     return {
-      previewNode: false,
+      isPreviewNode: false,
       resume: defaultResume
     }
   },
   methods: {
-    exitPreview() {
-      this.previewNode = false
-    },
-    preview() {
-      this.previewNode = true
+    isPreview() {
+      this.isPreviewNode = !this.isPreviewNode
     },
     saveData() {
+      console.log('saveData')
       let resumetring = JSON.stringify(this.resume)
       window.localStorage.setItem('myresume', resumetring)
     },
@@ -93,6 +97,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
   display: flex;
+  background-color: $DarkWhite;
+  overflow: hidden;
   .icon {
     width: 1em;
     height: 1em;
@@ -171,7 +177,7 @@ export default {
       width: 32px;
       height: 32px;
     }
-    &.active {
+    &:active {
       >.icon {
         fill: $LightYellow;
       }

@@ -14,21 +14,12 @@
                 </el-form-item>
             </div>
         </el-form>
-        <div class="button-container">
-            <button class="empty" v-on:click="emptyContact">清空</button>
-        </div>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['contact'],
-    methods: {
-        emptyContact() {
-            for (let key in this.contact) {
-                this.contact[key] = ''
-            }
-        }
-    }
+    props: ['contact']
+
 }
 </script>
