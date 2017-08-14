@@ -8,7 +8,7 @@
             </li>
         </ol>
         <ol>
-            <li id="save" class="save" v-on:click="saveData" v-show="resume.currentUser">
+            <li id="save" class="save" v-on:click="saveData" v-show="currentUser">
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-save"></use>
                 </svg>
@@ -25,7 +25,7 @@
 
 <script>
 export default {
-    props: ['resume'],
+    props: ['resume', 'currentUser'],
     data() {
         return {
             icons: ['card', 'works', 'skill', 'school', 'phone'],

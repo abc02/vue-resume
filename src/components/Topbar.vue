@@ -1,36 +1,23 @@
 <template>
     <div id="topbar">
         <h2>Resume</h2>
-        <div class="login-group" v-if="!currentUser">
-            <el-button @click="logInOrReg('login')">登 录</el-button>
-            <el-button @click="logInOrReg('reg')" type="text">注 册</el-button>
-            <el-dialog :visible.sync="formVisible" size="smail">
-                <span slot="title">
-                    {{isLogin? '登录' : '注册' }}
-                </span>
-                <el-form :label-position="labelPosition" label-width="60px" :model="formData">
-                    <el-form-item label="用户名">
-                        <el-input v-model="formData.user"></el-input>
-                    </el-form-item>
-                    <el-form-item label="密码">
-                        <el-input type="password" v-model="formData.pass"></el-input>
-                    </el-form-item>
-                </el-form>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="formVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="logOrRegEvet(isLogin)">{{isLogin? '登 录' : '注 册' }}</el-button>
-                </span>
-            </el-dialog>
-    
+        <div v-if="!currentUser">
+            <el-button @click="formData.logInVisible = true">登 录</el-button>
+            <el-button @click="formData.signUpVisible = true" type="text">注 册</el-button>
         </div>
-        <div class="user-group" v-else>
-            <el-button type="text">{{ currentUser.username }}</el-button>
-            <el-button type="text" @click="logOut">注 销</el-button>
+        <LogIn :formData="formData" v-if="formData.logInVisible" v-on:logIn="logInUp" />
+        <SignUp :formData="formData" v-if="formData.signUpVisible" v-on:signUp="signUp" />
+        <CurrentUser :resume="resume" v-if="false"></CurrentUser>
+        <div v-if="currentUser">
+            <el-button>{{currentUser.username}}</el-button>
+            <el-button @click="logOut">退出</el-button>
         </div>
     </div>
 </template>
 <script>
-import AV from 'leancloud-storage'
+import LogIn from './LogIn';
+import SignUp from './SignUp';
+import AV from 'leancloud-storage';
 var APP_ID = 'u4iB7Lu1Pe8XqJsITRwFFhV5-gzGzoHsz';
 var APP_KEY = 'GPkePG17AlJGYunRvLYtpoEj';
 
@@ -39,61 +26,61 @@ AV.init({
     appKey: APP_KEY
 });
 export default {
+    components: {
+        LogIn, SignUp
+    },
+    props: ['resume', 'currentUser'],
     data() {
         return {
-            currentUser: null,
-            formVisible: false,
-            isLogin: null,
-            labelPosition: 'right',
             formData: {
+                logInVisible: false,
+                signUpVisible: false,
                 user: '',
                 pass: '',
             }
         };
     },
     methods: {
-        logInOrReg(type) {
-            this.formVisible = !this.formVisible
-            if (type === "login") {
-                this.isLogin = true
-            }
-            if (type == 'reg') {
-                this.isLogin = false
-            }
-        },
-        logOrRegEvet(type) {
-            if (type) {
-                this.loginUp()
-            } else {
-                this.regUp()
-            }
-        },
-        regUp() {
+        signUp() {
             let user = new AV.User();
             user.setUsername(this.formData.user);
             user.setPassword(this.formData.pass);
             user.signUp().then((loginedUser) => {
-                console.log('注册成功: ' + loginedUser)
-                this.formVisible = false;
+                this.$message({
+                    message: '注册成功！',
+                    type: 'success'
+                });
+                this.formData.signUpVisible = false;
+                this.logInUp()
             }, (error) => {
-                alert('已被注册', error)
+                this.$message({
+                    message: '注册失败',
+                    type: 'warning'
+                });
             });
         },
-        loginUp() {
+        logInUp() {
             AV.User.logIn(this.formData.user, this.formData.pass).then((loginedUser) => {
-                console.log('登录成功')
-                this.currentUser = this.getCurrentUser()
-                this.$emit('logined', this.currentUser)
-            }, function (error) {
-                alert('登录失败')
+                this.$message({
+                    message: '登录成功，欢迎回来！',
+                    type: 'success'
+                });
+                this.formData.logInVisible = false;
+                this.$emit('logInUp', this.getCurrentUser())
+            }, (error) => {
+                this.$message({
+                    message: '登录失败，用户或密码错误',
+                    type: 'warning'
+                });
             });
         },
         logOut() {
             AV.User.logOut();
-            this.formVisible = false;
-            // 现在的 currentUser 是 null 了
-            this.currentUser = AV.User.current();
-            this.$emit('logined', this.currentUser)
+            this.$message({
+                message: '已登出',
+                type: 'success'
+            });
+            this.$emit('logOut')
         },
         getCurrentUser() {
             let { id, createdAt, attributes: { username } } = AV.User.current()
