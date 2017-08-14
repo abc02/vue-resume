@@ -3,11 +3,11 @@
   
   <div id="app" v-bind:class="{previewNode:isPreviewNode}">
     <transition tag="div" enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft" appear>
-      <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume" v-on:preview="isPreview" v-on:saveData="saveData" v-show="!isPreviewNode" />
+      <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume" :currentUser="currentUser" v-on:preview="isPreview" v-on:saveData="saveData" v-show="!isPreviewNode" />
     </transition>
     <div class="container">
       <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
-        <Topbar id="topbar" class="topbar" v-show="!isPreviewNode" v-on:logined="readLeancloud" />
+        <Topbar id="topbar" class="topbar" :resume="resume" :currentUser="currentUser" v-on:logInUp="logInUp" v-on:logOut="logOut" v-show="!isPreviewNode" />
       </transition>
       <main>
         <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
@@ -32,7 +32,6 @@ import Preview from './components/Preview'
 import AV from 'leancloud-storage'
 
 let defaultResume = {
-  currentUser: null,
   objectId: null,
   currentTab: 0,
   profile: {
@@ -62,6 +61,7 @@ export default {
   data() {
     return {
       isPreviewNode: false,
+      currentUser: null,
       resume: defaultResume
     }
   },
@@ -69,6 +69,39 @@ export default {
     isPreview() {
       this.isPreviewNode = !this.isPreviewNode
     },
+    logInUp(currentUser) {
+      console.log('App', currentUser)
+      this.currentUser = currentUser
+      this.readLeancloud()
+    },
+    logOut() {
+      this.currentUser = null
+      this.resume = defaultResume
+    },
+    readLeancloud() {
+      if (!this.currentUser) {
+        this.resume = defaultResume
+        return
+      } else if (this.currentUser) {
+        var query = new AV.Query('resumefile');
+        query.find()
+          .then((resumefile) => {
+            let resume = resumefile[0]
+            let id = resume.id
+            this.resume = JSON.parse(resume.attributes.resumefile)
+            this.resume.id = id
+          }, function (error) {
+            console.error(error)
+          })
+      }
+    },
+
+
+
+
+
+
+
     saveData() {
       console.log('data', this.resume.id)
       if (this.resume.id) {
@@ -98,32 +131,6 @@ export default {
         console.error(error);
       });
     },
-    readOldData() {
-      console.log('readOldData')
-      let oldResumetring = window.localStorage.getItem('myresume')
-      let oldResume = JSON.parse(oldResumetring)
-      this.resume = oldResume || defaultResume
-    },
-    readLeancloud(currentUser) {
-      this.resume.currentUser = currentUser
-      if (!currentUser) {
-        this.resume = defaultResume
-      }
-      console.log(currentUser)
-      if (currentUser) {
-        var query = new AV.Query('resumefile');
-        query.find()
-          .then((resumefile) => {
-            let resume = resumefile[0]
-            let id = resume.id
-            console.log(resume, id)
-            this.resume = JSON.parse(resume.attributes.resumefile)
-            this.resume.id = id
-          }, function (error) {
-            console.error(error)
-          })
-      }
-    },
     updataLeancloud() {
       // console.log(this.resumefile.id)
       var newresumefile = AV.Object.createWithoutData('resumefile', this.resume.id);
@@ -132,7 +139,13 @@ export default {
       newresumefile.set('resumefile', resumetring);
       // 保存到云端
       newresumefile.save();
-    }
+    },
+    readOldData() {
+      console.log('readOldData')
+      let oldResumetring = window.localStorage.getItem('myresume')
+      let oldResume = JSON.parse(oldResumetring)
+      this.resume = oldResume || defaultResume
+    },
 
   },
   created() {
