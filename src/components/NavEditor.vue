@@ -8,6 +8,11 @@
             </li>
         </ol>
         <ol>
+            <li id="pdf" class="pdf" @click="savePDF" v-show="currentUser">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-pdf"></use>
+                </svg>
+            </li>
             <li id="save" class="save" v-on:click="saveData" v-show="currentUser">
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-save"></use>
@@ -37,6 +42,9 @@ export default {
         },
         saveData() {
             this.$emit('saveData')
+        },
+        savePDF() {
+            this.$emit('savePDF')
         }
 
     }
