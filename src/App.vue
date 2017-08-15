@@ -70,6 +70,19 @@ export default {
   methods: {
     isPreview() {
       this.isPreviewNode = !this.isPreviewNode
+      if (this.isPreviewNode) {
+        this.$message({
+          message: '预览模式',
+          type: 'success'
+        })
+      } else {
+        this.$message({
+          message: '编辑模式',
+          type: 'success'
+        })
+
+      }
+
     },
     logInUp(currentUser) {
       console.log('App', currentUser)
@@ -135,7 +148,6 @@ export default {
               }
             }
           }
-
           pdf.save('content.pdf');
         }
       })
@@ -147,6 +159,10 @@ export default {
       } else {
         this.saveInitData()
       }
+      this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
     },
     saveInitData() {
 
@@ -165,7 +181,7 @@ export default {
       resumefile.save().then((resumefile) => {
         this.resume.id = resumefile.id
         console.log('objectId is ' + resumefile.id);
-      }, function (error) {
+      }, (error) => {
         console.error(error);
       });
     },
