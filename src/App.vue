@@ -1,13 +1,13 @@
 <template>
   <!--newresume 分支重构界面  -->
-  
+
   <div id="app" v-bind:class="{previewNode:isPreviewNode}">
     <transition tag="div" enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft" appear>
       <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume" :currentUser="currentUser" v-on:preview="isPreview" v-on:saveData="saveData" v-on:savePDF="savePDF" v-show="!isPreviewNode" />
     </transition>
     <div class="container">
       <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
-        <Topbar id="topbar" class="topbar" :resume="resume" :currentUser="currentUser" v-on:logInUp="logInUp" v-on:logOut="logOut" v-show="!isPreviewNode" />
+        <Topbar id="topbar" class="topbar" :resume="resume" :currentUser="currentUser" @getCurrentUser="getCurrentUser" v-on:logInUp="logInUp" v-on:logOut="logOut" v-show="!isPreviewNode" />
       </transition>
       <main>
         <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
@@ -93,6 +93,11 @@ export default {
       this.currentUser = null
       this.resume = defaultResume
     },
+    getCurrentUser(currentUser) {
+      // console.log(currentUser)
+      this.currentUser = currentUser
+
+    },
     readLeancloud() {
       if (!this.currentUser) {
         this.resume = defaultResume
@@ -105,7 +110,7 @@ export default {
             let id = resume.id
             this.resume = JSON.parse(resume.attributes.resumefile)
             this.resume.id = id
-          }, function (error) {
+          }, function(error) {
             console.error(error)
           })
       }
@@ -114,7 +119,7 @@ export default {
       var content = document.querySelector('div#preview');
 
       html2canvas(content, {
-        onrendered: function (canvas) {
+        onrendered: function(canvas) {
 
           var contentWidth = canvas.width;
           var contentHeight = canvas.height;

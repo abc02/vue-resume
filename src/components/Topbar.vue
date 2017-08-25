@@ -90,6 +90,15 @@ export default {
 
         }
 
+    },
+    created() {
+        let currentUser = this.getCurrentUser()
+        if (currentUser) {
+            // console.log('topbar', currentUser)
+            this.$emit('getCurrentUser', currentUser)
+        } else {
+            this.$emit('getCurrentUser', null)
+        }
     }
 }
 </script>
