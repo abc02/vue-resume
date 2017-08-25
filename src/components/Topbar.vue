@@ -83,7 +83,9 @@ export default {
             this.$emit('logOut')
         },
         getCurrentUser() {
-            let { id, createdAt, attributes: { username } } = AV.User.current()
+            let current = AV.User.current()
+            if (!current) return null
+            let { id, createdAt, attributes: { username } } = current
             return { id, username, createdAt }
         },
         fecthResume() {
@@ -94,9 +96,10 @@ export default {
     created() {
         let currentUser = this.getCurrentUser()
         if (currentUser) {
-            // console.log('topbar', currentUser)
+            console.log('true')
             this.$emit('getCurrentUser', currentUser)
         } else {
+            console.log('false')
             this.$emit('getCurrentUser', null)
         }
     }

@@ -25,16 +25,16 @@
 </template>
 
 <script>
-import Topbar from './components/Topbar'
-import NavEditor from './components/NavEditor'
-import Editor from './components/Editor'
-import Preview from './components/Preview'
+import Topbar from './Topbar'
+import NavEditor from './NavEditor'
+import Editor from './Editor'
+import Preview from './Preview'
 import AV from 'leancloud-storage'
 import jsPDF from 'jsPDF'
 import html2canvas from 'html2canvas'
 
 let defaultResume = {
-  objectId: null,
+  id: null,
   currentTab: 0,
   profile: {
     name: '',
@@ -96,17 +96,18 @@ export default {
     getCurrentUser(currentUser) {
       // console.log(currentUser)
       this.currentUser = currentUser
-      this.readLeancloud()
+      // this.readLeancloud()
     },
     readLeancloud() {
       if (!this.currentUser) {
         this.resume = defaultResume
         return
-      } else if (this.currentUser) {
+      } else if (this.currentUser && this.resume.id) {
         var query = new AV.Query('resumefile');
         query.find()
           .then((resumefile) => {
             let resume = resumefile[0]
+            console.log(resume)
             let id = resume.id
             this.resume = JSON.parse(resume.attributes.resumefile)
             this.resume.id = id
@@ -217,7 +218,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import './assets/color.scss';
+@import '../assets/color.scss';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
