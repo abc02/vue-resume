@@ -96,7 +96,7 @@ export default {
     getCurrentUser(currentUser) {
       // console.log(currentUser)
       this.currentUser = currentUser
-
+      this.readLeancloud()
     },
     readLeancloud() {
       if (!this.currentUser) {

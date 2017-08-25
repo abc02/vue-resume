@@ -7,8 +7,10 @@ import './assets/reset.scss'
 import 'animate.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import Vuex from 'vuex'
 
 Vue.use(ElementUI)
+Vue.use(Vuex)
 
 Vue.config.productionTip = false
 

@@ -17,7 +17,8 @@
     "leancloud-realtime": "^3.5.5",
     "leancloud-storage": "^3.0.4",
     "normalize.css": "^7.0.0",
-    "vue": "^2.3.3"
+    "vue": "^2.3.3",
+    "vuex": "^2.3.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
