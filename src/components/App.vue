@@ -3,17 +3,17 @@
 
   <div id="app" v-bind:class="{previewNode:isPreviewNode}">
     <transition tag="div" enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft" appear>
-      <NavEditor id="naveditor" class="naveditor" v-bind:resume="resume" :currentUser="currentUser" v-on:preview="isPreview" v-on:saveData="saveData" v-on:savePDF="savePDF" v-show="!isPreviewNode" />
+      <NavEditor id="naveditor" class="naveditor" v-on:preview="isPreview" v-on:saveData="saveData" v-on:savePDF="savePDF" v-show="!isPreviewNode" />
     </transition>
     <div class="container">
       <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
-        <Topbar id="topbar" class="topbar" :resume="resume" :currentUser="currentUser" @getCurrentUser="getCurrentUser" v-on:logInUp="logInUp" v-on:logOut="logOut" v-show="!isPreviewNode" />
+        <Topbar id="topbar" class="topbar" v-on:logInUp="logInUp" v-on:logOut="logOut" v-show="!isPreviewNode" />
       </transition>
       <main>
         <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
-          <Editor id="editor" class="editor" v-bind:resume="resume" v-on:saveData="saveData" v-show="!isPreviewNode" />
+          <Editor id="editor" class="editor" v-on:saveData="saveData" v-show="!isPreviewNode" />
         </transition>
-        <Preview id="preview" class="preview" v-bind:resume="resume" />
+        <Preview id="preview" class="preview" />
       </main>
       <div id="exitPreview" v-on:click="isPreview">
         <svg class="icon" aria-hidden="true ">
@@ -32,44 +32,46 @@ import Preview from './Preview'
 import AV from 'leancloud-storage'
 import jsPDF from 'jsPDF'
 import html2canvas from 'html2canvas'
+import store from '../store/index'
 
-let defaultResume = {
-  id: null,
-  currentTab: 0,
-  profile: {
-    name: '',
-    citry: '',
-    birth: ''
-  },
-  workHistory: [
-    { company: '', content: '' },
-  ],
-  projects: [
-    { name: '', content: '' },
-  ],
-  school: [
-    { name: '', major: '' }
-  ],
-  contact: {
-    phone: '',
-    wechat: '',
-    email: ''
-  }
-}
+
 export default {
+  store,
+  computed: {
+    resume() {
+      return this.$store.state.resume
+    },
+    defaultResume() {
+      return this.$store.state.defaultResume
+    },
+    currentUser: {
+      get() {
+        return this.$store.state.currentUser
+      },
+      set(vale) {
+        return this.$store.commit('isPreviewNode', value)
+      }
+
+    },
+    isPreviewNode() {
+      return this.$store.state.isPreviewNode
+    }
+
+  },
   components: {
     Topbar, NavEditor, Editor, Preview
   },
-  data() {
-    return {
-      isPreviewNode: false,
-      currentUser: null,
-      resume: defaultResume
-    }
-  },
+  // data() {
+  //   return {
+  //   }
+  // },
   methods: {
     isPreview() {
-      this.isPreviewNode = !this.isPreviewNode
+      store.commit({
+        type: 'isPreviewNode',
+        isPreviewNode: !this.$store.state.isPreviewNode
+      })
+      // this.isPreviewNode = !this.isPreviewNode
       if (this.isPreviewNode) {
         this.$message({
           message: '预览模式',
@@ -85,32 +87,65 @@ export default {
 
     },
     logInUp(currentUser) {
-      console.log('App', currentUser)
-      this.currentUser = currentUser
+      store.commit({
+        type: 'currentUser',
+        currentUser: currentUser
+      })
+      // this.currentUser = currentUser
       this.readLeancloud()
     },
     logOut() {
-      this.currentUser = null
-      this.resume = defaultResume
+      store.commit({
+        type: 'logOut',
+        currentUser: null
+      })
+      // this.currentUser = null
+      store.commit({
+        type: 'resume',
+        resume: this.defaultResume
+      })
+      // this.resume = this.defaultResume
     },
-    getCurrentUser(currentUser) {
-      // console.log(currentUser)
-      this.currentUser = currentUser
-      // this.readLeancloud()
+    getCurrentUser() {
+      let current = AV.User.current()
+      if (!current) return null
+      let { id, createdAt, attributes: { username } } = current
+      console.log('getCurrentUser', { id, createdAt, attributes: { username } })
+      store.commit({
+        type: 'currentUser',
+        currentUser: { id, createdAt, attributes: { username } }
+      })
+      // this.currentUser = currentUser
+      this.readLeancloud()
     },
     readLeancloud() {
       if (!this.currentUser) {
-        this.resume = defaultResume
+        console.log('defaultResume')
+        store.commit({
+          type: 'resume',
+          resume: this.defaultResume
+        })
+        // this.resume = this.defaultResume
         return
       } else if (this.currentUser && this.resume.id) {
-        var query = new AV.Query('resumefile');
+        var query = new AV.Query('resumefile')
         query.find()
           .then((resumefile) => {
             let resume = resumefile[0]
             console.log(resume)
             let id = resume.id
-            this.resume = JSON.parse(resume.attributes.resumefile)
-            this.resume.id = id
+            let userResume = JSON.parse(resume.attributes.resumefile)
+            usserResume.id = id
+            console.log(userResume)
+            store.commit({
+              type: 'resume',
+              resume: userResume
+            })
+            // store.commit({
+            //   type: 'resumeId',
+            //   resumefileId: id
+            // })
+            // this.resume.id = id
           }, function(error) {
             console.error(error)
           })
@@ -159,7 +194,8 @@ export default {
       })
     },
     saveData() {
-      console.log('data', this.resume.id)
+      console.log('saveData', this.resume.id)
+      this.savelocalStorage()
       if (this.resume.id) {
         this.updataLeancloud()
       } else {
@@ -173,7 +209,7 @@ export default {
     saveInitData() {
 
       // window.localStorage.setItem('myresume', resumetring)`
-      console.log('saveData')
+      console.log('saveInitData', this.resume.id)
       var resumetring = JSON.stringify(this.resume)
       var Resumefile = AV.Object.extend('resumefile')
       var resumefile = new Resumefile()
@@ -185,14 +221,19 @@ export default {
 
       // 设置优先级
       resumefile.save().then((resumefile) => {
-        this.resume.id = resumefile.id
+        console.log(resumefile.id)
+        store.commit({
+          type: 'resumeId',
+          resumefileId: resumefile.id
+        })
+        // this.resume.id = resumefile.id
         console.log('objectId is ' + resumefile.id);
       }, (error) => {
         console.error(error);
       });
     },
     updataLeancloud() {
-      // console.log(this.resumefile.id)
+      console.log('updataLeancloud', this.resume.id)
       var newresumefile = AV.Object.createWithoutData('resumefile', this.resume.id);
       // 修改属性
       var resumetring = JSON.stringify(this.resume)
@@ -200,19 +241,28 @@ export default {
       // 保存到云端
       newresumefile.save();
     },
-    readOldData() {
-      console.log('readOldData')
-      let oldResumetring = window.localStorage.getItem('myresume')
-      let oldResume = JSON.parse(oldResumetring)
-      this.resume = oldResume || defaultResume
+    savelocalStorage() {
+      console.log('savelocalStorage')
+      let localStoragestring = window.localStorage.getItem('state')
+      let oldResume = JSON.parse(localStoragestring)
+      store.commit({
+        type: 'resume',
+        resume: oldResume ? oldResume : this.defaultResume
+      })
     },
+
 
   },
   created() {
     // 浏览器卸载时，存储数据到localStorage
     // window.onbeforeunload = () => this.saveData()
 
-    // this.readOldData()
+    let state = localStorage.getItem('state')
+    if (state) {
+      state = JSON.parse(state)
+    }
+    this.$store.commit('initState', state)
+    this.getCurrentUser()
   }
 }
 </script>

@@ -30,7 +30,15 @@
 
 <script>
 export default {
-    props: ['resume', 'currentUser'],
+    // props: ['resume', 'currentUser'],
+    computed: {
+        resume() {
+            return this.$store.state.resume
+        },
+        currentUser() {
+            return this.$store.state.currentUser
+        }
+    },
     data() {
         return {
             icons: ['card', 'works', 'skill', 'school', 'phone'],

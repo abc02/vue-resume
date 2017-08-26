@@ -9,7 +9,7 @@
         <SignUp :formData="formData" v-if="formData.signUpVisible" v-on:signUp="signUp" />
         <CurrentUser :resume="resume" v-if="false"></CurrentUser>
         <div v-if="currentUser">
-            <el-button>{{currentUser.username}}</el-button>
+            <el-button>{{currentUser.attributes.username}}</el-button>
             <el-button @click="logOut">退出</el-button>
         </div>
     </div>
@@ -26,10 +26,19 @@ AV.init({
     appKey: APP_KEY
 });
 export default {
+
     components: {
         LogIn, SignUp
     },
-    props: ['resume', 'currentUser'],
+    // props: ['resume', 'currentUser'],
+    computed: {
+        resume() {
+            return this.$store.state.resume
+        },
+        currentUser() {
+            return this.$store.state.currentUser
+        }
+    },
     data() {
         return {
             formData: {
@@ -86,7 +95,7 @@ export default {
             let current = AV.User.current()
             if (!current) return null
             let { id, createdAt, attributes: { username } } = current
-            return { id, username, createdAt }
+            return { id, createdAt, attributes: { username } }
         },
         fecthResume() {
 
@@ -94,14 +103,14 @@ export default {
 
     },
     created() {
-        let currentUser = this.getCurrentUser()
-        if (currentUser) {
-            console.log('true')
-            this.$emit('getCurrentUser', currentUser)
-        } else {
-            console.log('false')
-            this.$emit('getCurrentUser', null)
-        }
+        // let currentUser = this.getCurrentUser()
+        // if (currentUser) {
+        //     console.log('true')
+        //     this.$emit('getCurrentUser', currentUser)
+        // } else {
+        //     console.log('false')
+        //     this.$emit('getCurrentUser', null)
+        // }
     }
 }
 </script>

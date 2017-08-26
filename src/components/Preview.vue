@@ -8,7 +8,7 @@
             </p>
         </section>
         <div class="container">
-    
+
             <section v-if="filter(resume.workHistory).length > 0" class="workHistory">
                 <h2>工作经历</h2>
                 <ul>
@@ -37,7 +37,7 @@
                     </li>
                 </ul>
             </section>
-    
+
             <section class="contact">
                 <h2>联系方式</h2>
                 <p>手机:
@@ -56,7 +56,12 @@
 
 <script>
 export default {
-    props: ['resume'],
+    // props: ['resume'],
+    computed: {
+        resume() {
+            return this.$store.state.resume
+        }
+    },
     methods: {
         filter(array) { //过滤出非空对象
             return array.filter(item => !this.isEmpty(item))

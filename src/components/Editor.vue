@@ -1,6 +1,6 @@
 <template>
   <div id="editor">
-  
+
     <ol class="panes">
       <transition enter-active-class="animated bounceInLeft" v-on:transitionend="test">
         <li v-bind:class="{acitve: resume.currentTab ===0}" v-show="resume.currentTab === 0">
@@ -43,7 +43,12 @@ import SchoolEditor from './SchoolEditor'
 import ContactEditor from './ContactEditor'
 import ButtonGroup from './ButtonGroup'
 export default {
-  props: ['resume'],
+  // props: ['resume'],
+  computed: {
+    resume() {
+      return this.$store.state.resume
+    }
+  },
   data() {
     return {
       show: true,
