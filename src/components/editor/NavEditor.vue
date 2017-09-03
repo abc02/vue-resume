@@ -1,24 +1,24 @@
 <template>
     <div id="naveditor">
         <ol>
-            <li v-for="(item,index) in icons" v-bind:class="{active:resume.currentTab === index}" v-on:click="resume.currentTab = index">
+            <li v-for="(item,index) in icons" v-bind:class="{active:resume.currentTab === index}" @click="setCurrentTab(index)">
                 <svg class="icon" aria-hidden="true">
                     <use v-bind:xlink:href="`#icon-${item}`"></use>
                 </svg>
             </li>
         </ol>
         <ol>
-            <li id="pdf" class="pdf" @click="savePDF" v-show="currentUser">
+            <li id="pdf" class="pdf" @click="pdf" v-show="currentUser">
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-pdf"></use>
                 </svg>
             </li>
-            <li id="save" class="save" v-on:click="saveData" v-show="currentUser">
+            <li id="save" class="save" @click="save" v-show="currentUser">
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-save"></use>
                 </svg>
             </li>
-            <li id="preview" class="preview" v-on:click="preview">
+            <li id="preview" class="preview" @click="isPreview">
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-preview"></use>
                 </svg>
@@ -29,15 +29,13 @@
 
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+import leancloudService from 'js/service/leancloudService.js'
+
 export default {
-    // props: ['resume', 'currentUser'],
+    name: 'NavEditor',
     computed: {
-        resume() {
-            return this.$store.state.resume
-        },
-        currentUser() {
-            return this.$store.state.currentUser
-        }
+        ...mapState(['resume', 'currentUser', 'isPreviewNode'])
     },
     data() {
         return {
@@ -45,22 +43,29 @@ export default {
         }
     },
     methods: {
-        preview() {
-            this.$emit("preview")
+        isPreview() {
+            this.$emit('isPreview')
         },
-        saveData() {
-            this.$emit('saveData')
+        save() {
+            if (this.resume.id) {
+                leancloudService.updata(this.resume)
+            } else {
+                leancloudService.initdata(this.resume).then((resumefile) => {
+                    this.$store.commit('setResumefileId', resumefile.id)
+                }, (error) => {
+                    console.error(error);
+                });
+            }
         },
-        savePDF() {
-            this.$emit('savePDF')
-        }
-
+        pdf() {
+        },
+        ...mapMutations(['setCurrentTab'])
     }
 }
 </script>
 
 <style lang="scss">
-@import '../assets/color.scss';
+@import '../../assets/color.scss';
 #naveditor {
     background-color: $Black;
     width: 80px;

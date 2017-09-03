@@ -3,15 +3,15 @@
 
   <div id="app" v-bind:class="{previewNode:isPreviewNode}">
     <transition tag="div" enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft" appear>
-      <NavEditor id="naveditor" class="naveditor" v-on:preview="isPreview" v-on:saveData="saveData" v-on:savePDF="savePDF" v-show="!isPreviewNode" />
+      <NavEditor id="naveditor" class="naveditor" @isPreview="isPreview" v-show="!isPreviewNode" />
     </transition>
     <div class="container">
       <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
-        <Topbar id="topbar" class="topbar" v-on:logInUp="logInUp" v-on:logOut="logOut" v-show="!isPreviewNode" />
+        <Topbar id="topbar" class="topbar" v-show="!isPreviewNode" />
       </transition>
       <main>
         <transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutLeft">
-          <Editor id="editor" class="editor" v-on:saveData="saveData" v-show="!isPreviewNode" />
+          <Editor id="editor" class="editor" v-show="!isPreviewNode" />
         </transition>
         <Preview id="preview" class="preview" />
       </main>
@@ -25,244 +25,35 @@
 </template>
 
 <script>
-import Topbar from './Topbar'
-import NavEditor from './NavEditor'
-import Editor from './Editor'
-import Preview from './Preview'
-import AV from 'leancloud-storage'
-import jsPDF from 'jsPDF'
-import html2canvas from 'html2canvas'
-import store from '../store/index'
+import { mapState, mapMutations } from 'vuex'
+import AV from 'js/api/av.js';
+import mixin from 'js/api/mixin.js'
+import signService from 'js/service/signService.js'
+import leancloudService from 'js/service/leancloudService.js'
 
 
 export default {
-  store,
+  name:'app',
+  mixins: [mixin, AV],
   computed: {
-    resume() {
-      return this.$store.state.resume
-    },
-    defaultResume() {
-      return this.$store.state.defaultResume
-    },
-    currentUser: {
-      get() {
-        return this.$store.state.currentUser
-      },
-      set(vale) {
-        return this.$store.commit('isPreviewNode', value)
-      }
-
-    },
-    isPreviewNode() {
-      return this.$store.state.isPreviewNode
-    }
-
+    ...mapState(['resume','currentUser','isPreviewNode','formData'])
   },
-  components: {
-    Topbar, NavEditor, Editor, Preview
-  },
-  // data() {
-  //   return {
-  //   }
-  // },
   methods: {
     isPreview() {
-      store.commit({
-        type: 'isPreviewNode',
-        isPreviewNode: !this.$store.state.isPreviewNode
-      })
-      // this.isPreviewNode = !this.isPreviewNode
+      this.$store.commit('isPreviewNode' )
       if (this.isPreviewNode) {
-        this.$message({
-          message: '预览模式',
-          type: 'success'
-        })
+        this.msg('预览模式')
       } else {
-        this.$message({
-          message: '编辑模式',
-          type: 'success'
-        })
-
+        this.msg('编辑模式')
       }
-
-    },
-    logInUp(currentUser) {
-      store.commit({
-        type: 'currentUser',
-        currentUser: currentUser
-      })
-      // this.currentUser = currentUser
-      this.readLeancloud()
-    },
-    logOut() {
-      store.commit({
-        type: 'logOut',
-        currentUser: null
-      })
-      // this.currentUser = null
-      store.commit({
-        type: 'resume',
-        resume: this.defaultResume
-      })
-      // this.resume = this.defaultResume
-    },
-    getCurrentUser() {
-      let current = AV.User.current()
-      if (!current) return null
-      let { id, createdAt, attributes: { username } } = current
-      console.log('getCurrentUser', { id, createdAt, attributes: { username } })
-      store.commit({
-        type: 'currentUser',
-        currentUser: { id, createdAt, attributes: { username } }
-      })
-      // this.currentUser = currentUser
-      this.readLeancloud()
-    },
-    readLeancloud() {
-      if (!this.currentUser) {
-        console.log('defaultResume')
-        store.commit({
-          type: 'resume',
-          resume: this.defaultResume
-        })
-        // this.resume = this.defaultResume
-        return
-      } else if (this.currentUser && this.resume.id) {
-        var query = new AV.Query('resumefile')
-        query.find()
-          .then((resumefile) => {
-            let resume = resumefile[0]
-            console.log(resume)
-            let id = resume.id
-            let userResume = JSON.parse(resume.attributes.resumefile)
-            usserResume.id = id
-            console.log(userResume)
-            store.commit({
-              type: 'resume',
-              resume: userResume
-            })
-            // store.commit({
-            //   type: 'resumeId',
-            //   resumefileId: id
-            // })
-            // this.resume.id = id
-          }, function(error) {
-            console.error(error)
-          })
-      }
-    },
-    savePDF() {
-      var content = document.querySelector('div#preview');
-
-      html2canvas(content, {
-        onrendered: function(canvas) {
-
-          var contentWidth = canvas.width;
-          var contentHeight = canvas.height;
-
-          //一页pdf显示html页面生成的canvas高度;
-          var pageHeight = contentWidth / 592.28 * 841.89;
-          //未生成pdf的html页面高度
-          var leftHeight = contentHeight;
-          //页面偏移
-          var position = 0;
-          //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-          var imgWidth = 595.28;
-          var imgHeight = 592.28 / contentWidth * contentHeight;
-
-          var pageData = canvas.toDataURL('image/jpeg', 1.0);
-
-          var pdf = new jsPDF('', 'pt', 'a4');
-
-          //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
-          //当内容未超过pdf一页显示的范围，无需分页
-          if (leftHeight < pageHeight) {
-            pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
-          } else {
-            while (leftHeight > 0) {
-              pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-              leftHeight -= pageHeight;
-              position -= 841.89;
-              //避免添加空白页
-              if (leftHeight > 0) {
-                pdf.addPage();
-              }
-            }
-          }
-          pdf.save('content.pdf');
-        }
-      })
-    },
-    saveData() {
-      console.log('saveData', this.resume.id)
-      this.savelocalStorage()
-      if (this.resume.id) {
-        this.updataLeancloud()
-      } else {
-        this.saveInitData()
-      }
-      this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-    },
-    saveInitData() {
-
-      // window.localStorage.setItem('myresume', resumetring)`
-      console.log('saveInitData', this.resume.id)
-      var resumetring = JSON.stringify(this.resume)
-      var Resumefile = AV.Object.extend('resumefile')
-      var resumefile = new Resumefile()
-      var acl = new AV.ACL()
-      acl.setReadAccess(AV.User.current(), true) // 只有这个 user 能读
-      acl.setWriteAccess(AV.User.current(), true) // 只有这个 user 能写
-      resumefile.set('resumefile', resumetring);
-      resumefile.setACL(acl) // 设置访问控制
-
-      // 设置优先级
-      resumefile.save().then((resumefile) => {
-        console.log(resumefile.id)
-        store.commit({
-          type: 'resumeId',
-          resumefileId: resumefile.id
-        })
-        // this.resume.id = resumefile.id
-        console.log('objectId is ' + resumefile.id);
-      }, (error) => {
-        console.error(error);
-      });
-    },
-    updataLeancloud() {
-      console.log('updataLeancloud', this.resume.id)
-      var newresumefile = AV.Object.createWithoutData('resumefile', this.resume.id);
-      // 修改属性
-      var resumetring = JSON.stringify(this.resume)
-      newresumefile.set('resumefile', resumetring);
-      // 保存到云端
-      newresumefile.save();
-    },
-    savelocalStorage() {
-      console.log('savelocalStorage')
-      let localStoragestring = window.localStorage.getItem('state')
-      let oldResume = JSON.parse(localStoragestring)
-      store.commit({
-        type: 'resume',
-        resume: oldResume ? oldResume : this.defaultResume
-      })
-    },
-
-
+    }
   },
   created() {
-    // 浏览器卸载时，存储数据到localStorage
-    // window.onbeforeunload = () => this.saveData()
-
-    let state = localStorage.getItem('state')
-    if (state) {
-      state = JSON.parse(state)
-    }
-    this.$store.commit('initState', state)
-    this.getCurrentUser()
+    let currentUser = signService.getCurrentUser()
+    this.$store.commit('setCurrentUser', currentUser)
+    this.$store.dispatch('read',{currentUser}).then(res=>{
+      this.$store.commit('setResume', res)
+    })
   }
 }
 </script>

@@ -26,16 +26,13 @@ export default {
             let type = this.buttonType.type,
                 fn = this.buttonType.callBlacks[1]
             fn(type)
-        },
-        removeData(index) {
-            this.projects.splice(index, 1)
         }
     }
 }
 </script>
 
 <style lang="scss">
-@import '../assets/color.scss';
+@import '../../assets/color.scss';
 .button-container {
     display: flex;
     box-shadow: 0 8px 8px $LightShadow;

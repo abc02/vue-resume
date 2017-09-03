@@ -2,33 +2,33 @@
   <div id="editor">
 
     <ol class="panes">
-      <transition enter-active-class="animated bounceInLeft" v-on:transitionend="test">
+      <transition enter-active-class="animated bounceInLeft">
         <li v-bind:class="{acitve: resume.currentTab ===0}" v-show="resume.currentTab === 0">
-          <ProfileEditor v-bind:profile="resume.profile" />
+          <ProfileEditor />
           <ButtonGroup v-bind:buttonType="porfileButton" />
         </li>
       </transition>
       <transition enter-active-class="animated bounceInLeft">
         <li v-bind:class="{acitve: resume.currentTab ===1}" v-show="resume.currentTab ===1">
-          <WorkHistoryEditor v-bind:workHistory="resume.workHistory" />
+          <WorkHistoryEditor />
           <ButtonGroup v-bind:buttonType="workHistoryButton" />
         </li>
       </transition>
       <transition enter-active-class="animated bounceInLeft">
         <li v-bind:class="{acitve: resume.currentTab ===2}" v-show="resume.currentTab === 2">
-          <ProjectEditor v-bind:projects="resume.projects" />
+          <ProjectEditor/>
           <ButtonGroup v-bind:buttonType="projectsButton" />
         </li>
       </transition>
       <transition enter-active-class="animated bounceInLeft">
         <li v-bind:class="{acitve: resume.currentTab ===3}" v-show="resume.currentTab ===3">
-          <SchoolEditor v-bind:school="resume.school" />
+          <SchoolEditor />
           <ButtonGroup v-bind:buttonType="schoolButton" />
         </li>
       </transition>
       <transition enter-active-class="animated bounceInLeft">
         <li v-bind:class="{acitve: resume.currentTab ===4}" v-show="resume.currentTab ===4">
-          <ContactEditor v-bind:contact="resume.contact" />
+          <ContactEditor />
           <ButtonGroup v-bind:buttonType="contactButton" />
         </li>
       </transition>
@@ -36,18 +36,17 @@
   </div>
 </template>
 <script>
-import ProfileEditor from './ProfileEditor'
-import WorkHistoryEditor from './WorkHistoryEditor'
-import ProjectEditor from './ProjectEditor'
-import SchoolEditor from './SchoolEditor'
-import ContactEditor from './ContactEditor'
-import ButtonGroup from './ButtonGroup'
+import { mapState, mapMutations } from 'vuex'
+import ProfileEditor from 'editor/ProfileEditor'
+import WorkHistoryEditor from 'editor/WorkHistoryEditor'
+import ProjectEditor from 'editor/ProjectEditor'
+import SchoolEditor from 'editor/SchoolEditor'
+import ContactEditor from 'editor/ContactEditor'
+import ButtonGroup from 'editor/ButtonGroup'
 export default {
-  // props: ['resume'],
+  name: 'Editor',
   computed: {
-    resume() {
-      return this.$store.state.resume
-    }
+    ...mapState(['resume'])
   },
   data() {
     return {
@@ -60,17 +59,17 @@ export default {
       workHistoryButton: {
         type: 'workHistory',
         msg: ['清空', '新增'],
-        callBlacks: [this.emptyData, this.addData]
+        callBlacks: [this.emptyData, this.addItem]
       },
       projectsButton: {
         type: 'projects',
         msg: ['清空', '新增'],
-        callBlacks: [this.emptyData, this.addData]
+        callBlacks: [this.emptyData, this.addItem]
       },
       schoolButton: {
         type: 'school',
         msg: ['清空', '新增'],
-        callBlacks: [this.emptyData, this.addData]
+        callBlacks: [this.emptyData, this.addItem]
       },
       contactButton: {
         type: 'contact',
@@ -84,48 +83,13 @@ export default {
     ProfileEditor, WorkHistoryEditor, ProjectEditor, SchoolEditor, ContactEditor, ButtonGroup
   },
   methods: {
-    addData(type) {
-      let tmp = this.resume[type]
-      if (!Array.isArray(tmp)) return
-      switch (type) {
-        case 'workHistory':
-          tmp.push({ company: '', content: '' })
-          break;
-        case 'projects':
-          tmp.push({ name: '', content: '' })
-          break;
-        case 'school':
-          tmp.push({ name: '', major: '' })
-          break;
-      }
-
-    },
-    emptyData(type) {
-      let tmp = this.resume[type]
-      if (!Array.isArray(tmp)) {
-        console.log('obj')
-        for (let key in tmp) {
-          tmp[key] = ''
-        }
-      } else {
-        console.log('arr')
-        tmp.map((obj) => {
-          for (let key in obj) {
-            obj[key] = ''
-          }
-        })
-      }
-    },
-    test() {
-      console.log('transitionend ')
-    }
-
+    ...mapMutations(['addItem','emptyData'])
   }
 
 }
 </script>
 <style lang="scss">
-@import '../assets/color.scss';
+@import '../../assets/color.scss';
 #editor {
   min-height: 100px;
   display: flex;
