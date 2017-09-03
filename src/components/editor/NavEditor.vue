@@ -49,9 +49,11 @@ export default {
         save() {
             if (this.resume.id) {
                 leancloudService.updata(this.resume)
+                this.msg('更新成功')
             } else {
                 leancloudService.initdata(this.resume).then((resumefile) => {
                     this.$store.commit('setResumefileId', resumefile.id)
+                    this.msg('保存成功')
                 }, (error) => {
                     console.error(error);
                 });
