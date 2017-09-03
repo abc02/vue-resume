@@ -2,6 +2,8 @@
     <el-dialog :visible.sync="formData.logInVisible" size="smail">
         <span slot="title">
             登录
+        
+           
         </span>
         <el-form label-position="right" label-width="60px" :model="formData">
             <el-form-item label="用户名">
@@ -11,6 +13,7 @@
                 <el-input type="password" :value="formData.pass" @change="changePass($event)"></el-input>
             </el-form-item>
         </el-form>
+         <span class="test" @click="test = false" v-show="test">测试账户:hqq密码:1</span>
         <span slot="footer" class="dialog-footer">
             <el-button @click="logInVisible">取 消</el-button>
             <el-button type="primary" @click="logInUp">登录</el-button>
@@ -26,6 +29,11 @@ import leancloudService from 'js/service/leancloudService.js'
 
 
 export default {
+    data() {
+        return {
+            test: true
+        }
+    },
     computed: {
         ...mapState(['formData'])
     },
@@ -49,3 +57,11 @@ export default {
     }
 }
 </script>
+
+<style>
+.test{
+    font-size: 8px;
+    cursor: pointer;
+}
+
+</style>
