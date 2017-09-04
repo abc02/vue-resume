@@ -8,7 +8,7 @@
                 <el-input :value="formData.user" @change="changeUser($event)"></el-input>
             </el-form-item>
             <el-form-item label="密码">
-                <el-input type="password" :value="formData.pass" @change="changePass($event)"></el-input>
+                <el-input type="password" :value="formData.pass" @change="changePass($event)" @keyup.enter.native="signUp"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -41,6 +41,9 @@ export default {
                 console.log(error)
                 this.msg('注册失败', 'warning')
             })
+        },
+        onEnter(){
+            console.log('onEnter')
         },
         ...mapMutations(['changeUser', 'changePass', 'signUpVisible'])
     }

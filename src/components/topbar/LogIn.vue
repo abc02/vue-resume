@@ -10,13 +10,13 @@
                 <el-input :value="formData.user" @change="changeUser($event)"></el-input>
             </el-form-item>
             <el-form-item label="密码">
-                <el-input type="password" :value="formData.pass" @change="changePass($event)"></el-input>
+                <el-input type="password" :value="formData.pass" @change="changePass($event)" @keyup.enter.native="logInUp"></el-input>
             </el-form-item>
         </el-form>
          <span class="test" @click="test = false" v-show="test">测试账户:hqq密码:1</span>
         <span slot="footer" class="dialog-footer">
             <el-button @click="logInVisible">取 消</el-button>
-            <el-button type="primary" @click="logInUp">登录</el-button>
+            <el-button type="primary" @click="logInUp" >登录</el-button>
         </span>
     </el-dialog>
 </template>
@@ -39,6 +39,7 @@ export default {
     },
     methods: {
         logInUp() {
+            console.log('logInUp')
             signService.logInUp(this.formData).then(loginup => {
                 console.log('logInUp', loginup)
                 this.msg('登录成功，欢迎回来！')
@@ -60,7 +61,6 @@ export default {
 
 <style>
 .test{
-    font-size: 8px;
     cursor: pointer;
 }
 
